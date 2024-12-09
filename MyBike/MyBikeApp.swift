@@ -9,9 +9,13 @@ import SwiftUI
 
 @main
 struct MyBikeApp: App {
+    
+    @StateObject var authViewModel = AuthViewModel()
+    
     var body: some Scene {
         WindowGroup {
-            ContentView()
+            ApplicationSwitcher()
+                .environmentObject(authViewModel)
         }
     }
 }
