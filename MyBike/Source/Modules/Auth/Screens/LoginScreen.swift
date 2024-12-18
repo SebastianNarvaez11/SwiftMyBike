@@ -14,7 +14,7 @@ struct LoginScreen: View {
     @StateObject var loginForm = LoginFormViewModel()
     
     var body: some View {
-        ScreenLayout(){
+        ScreenLayout(withScroll: true){
             VStack(alignment: .center, spacing: 20){
                 
                 AuthHeaderView(title: "Iniciar sesion")
@@ -46,6 +46,14 @@ struct LoginScreen: View {
                             }
                         }
                     })
+                
+                ButtonView(
+                    label: "Iniciar sesion con Google",
+                    action: {
+                        Task {
+                            await authViewModel.singInWithGoogle()
+                        }
+                    }).background()
                 
                 ButtonView(label: "Registrarse", isOutline: true, action: {router.navigateTo(route: .register)})
             }

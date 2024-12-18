@@ -1,6 +1,6 @@
 //
 //  SpinnerView.swift
-//  WordyCards
+//  MyBike
 //
 //  Created by Sebastian on 25/08/24.
 //

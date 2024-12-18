@@ -11,4 +11,5 @@ enum AuthStatus  {
     case authenticated
     case unauthenticated
     case checking
+    case checkingProfile
 }

@@ -8,7 +8,18 @@
 import Foundation
 
 struct RefreshTokenResource: ApiResourceProtocol {
-    typealias ResponseType = RefreshTokenResponse
-    var path: String = "/api/v1/auth/refresh-token"
-    var queryItems: [URLQueryItem]? = nil
+    typealias ResponseType = LoginResponse
+    // La url es: "/auth/v1/token?grant_type=refresh_token"
+    
+    var path: String = "/auth/v1/token"
+    
+    var grantType: String = "refresh_token"
+
+    var queryItems: [URLQueryItem]? {
+        var items = [URLQueryItem]()
+        
+        items.append(URLQueryItem(name: "grant_type", value: grantType))
+        
+        return items.isEmpty ? nil : items
+    }
 }

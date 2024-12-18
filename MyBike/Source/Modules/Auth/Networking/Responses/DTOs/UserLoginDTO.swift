@@ -7,14 +7,14 @@
 
 import Foundation
 
-struct UserLoginDTO {
+struct UserLoginDTO: Decodable {
     let id: String
     let email: String
     let phone: String
     let lastSignIn: String
 }
 
-extension UserLoginDTO: Decodable {
+extension UserLoginDTO {
     enum CodingKeys: String, CodingKey {
         case id, email, phone
         case lastSignIn = "last_sign_in_at"

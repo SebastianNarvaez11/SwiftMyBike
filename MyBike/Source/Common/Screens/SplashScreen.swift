@@ -25,11 +25,11 @@ struct SplashScreen: View {
                 SpinnerView()
             }
         }
-//        .onAppear(){
-//            Task{
-//                await authViewModel.checkStatus()
-//            }
-//        }
+        .onAppear(){
+            Task{
+                await authViewModel.checkAuthStatus()
+            }
+        }
     }
 }
 

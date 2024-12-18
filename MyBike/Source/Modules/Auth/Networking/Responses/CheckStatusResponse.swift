@@ -7,17 +7,4 @@
 
 import Foundation
 
-struct CheckStatusResponse {
-    let user: UserLoginDTO
-}
-
-extension CheckStatusResponse: Decodable {
-    enum CodingKeys: String, CodingKey {
-        case user
-    }
-    
-    init(from decoder: any Decoder) throws {
-        let container = try decoder.container(keyedBy: CodingKeys.self)
-        self.user = try container.decode(UserLoginDTO.self, forKey: .user)
-    }
-}
+typealias CheckStatusResponse = UserLoginDTO

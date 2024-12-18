@@ -12,21 +12,21 @@ class TokenManager: TokenManagerProtocol {
     private let keychain = KeychainSwift()
     
     var accessToken: String? {
-        return keychain.get("ACCESS-TOKEN-SP")
+        return keychain.get("ACCESS-TOKEN-MB")
     }
     
     var refreshToken: String? {
-        return keychain.get("REFRESH-TOKEN-SP")
+        return keychain.get("REFRESH-TOKEN-MB")
     }
     
     func saveTokens(accessToken: String, refreshToken: String) {
-        keychain.set(accessToken, forKey: "ACCESS-TOKEN-SP")
-        keychain.set(refreshToken, forKey: "REFRESH-TOKEN-SP")
+        keychain.set(accessToken, forKey: "ACCESS-TOKEN-MB")
+        keychain.set(refreshToken, forKey: "REFRESH-TOKEN-MB")
     }
     
     func removeTokens() {
-        keychain.delete("ACCESS-TOKEN-SP")
-        keychain.delete("REFRESH-TOKEN-SP")
+        keychain.delete("ACCESS-TOKEN-MB")
+        keychain.delete("REFRESH-TOKEN-MB")
     }
     
     func refreshAccessToken() async throws -> Void {
@@ -37,8 +37,13 @@ class TokenManager: TokenManagerProtocol {
         print("obteniendo nuevo access token...")
         
         var request = URLRequest(url: RefreshTokenResource().url)
-        request.httpMethod = "GET"
-        request.setValue("Bearer \(refreshToken)", forHTTPHeaderField: "Authorization")
+        
+        request.httpMethod = "POST"
+        let apiKey = ApiConfig.apiKeySupabase
+        request.setValue(apiKey, forHTTPHeaderField: "apikey")
+        request.httpBody = try JSONEncoder().encode(RefreshTokenBodyRequest(refreshToken: refreshToken))
+        request.setValue("application/json", forHTTPHeaderField: "Content-Type")
+    
         
         let (data, response) = try await URLSession.shared.data(for: request)
         
@@ -47,8 +52,8 @@ class TokenManager: TokenManagerProtocol {
             throw APIError.unauthorized
         }
         
-        let tokenResponse = try JSONDecoder().decode(RefreshTokenResponse.self, from: data)
-        keychain.set(tokenResponse.newAccessToken, forKey: "ACCESS-TOKEN-SP")
+        let tokenResponse = try JSONDecoder().decode(LoginResponse.self, from: data)
+        keychain.set(tokenResponse.accessToken, forKey: "ACCESS-TOKEN-MB")
     }
 }
 

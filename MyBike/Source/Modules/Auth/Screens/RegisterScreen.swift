@@ -6,48 +6,79 @@
 //
 
 import SwiftUI
+import Supabase
+import AuthenticationServices
 
 struct RegisterScreen: View {
     @EnvironmentObject var authViewModel: AuthViewModel
     @EnvironmentObject var router: AuthRouter
     
-    @StateObject var loginForm = LoginFormViewModel()
+    @StateObject var registerForm = RegisterFormViewModel()
+    @State var showSuccessAlert: Bool = false
     
     var body: some View {
-        ScreenLayout(goBack: { router.navigateBack() }){
+        ScreenLayout(withScroll: true, goBack: { router.navigateBack() }){
             VStack(alignment: .center, spacing: 20){
                 
                 AuthHeaderView(title: "Registrarse")
                 
-                ButtonView(label: "Google", action: {})
+                TextFieldView(
+                    value: $registerForm.email,
+                    label: "Tu correo",
+                    placeholder: "Email",
+                    hasError: !registerForm.isEmailValid && registerForm.isPressedSubmit,
+                    errorMessage: "Ingresa un correo valido")
                 
-//                TextFieldView(
-//                    value: $loginForm.email,
-//                    label: "Correo",
-//                    placeholder: "Tu correo",
-//                    hasError: !loginForm.isValidEmail && loginForm.isSubmitPressed,
-//                    errorMessage: "Ingresa un correo valido")
-//                
-//                TextFieldView(
-//                    value: $loginForm.password,
-//                    label: "Contraseña",
-//                    placeholder: "Tu contraseña",
-//                    hasError: !loginForm.isValidPassword && loginForm.isSubmitPressed,
-//                    errorMessage: "Este campo es requerido",
-//                    isSecure: true
-//                )
-//                
-//                ButtonView(
-//                    label: "Iniciar sesion",
-//                    isLoading: authViewModel.isLoading,
-//                    action: {
-//                        loginForm.isSubmitPressed = true
-//                        Task{
-//                            if(loginForm.isValidForm){
-//                                await authViewModel.login(data: LoginBodyRequest(email: loginForm.email, password: loginForm.password))
-//                            }
-//                        }
-//                    })
+                TextFieldView(
+                    value: $registerForm.password,
+                    label: "Contraseña",
+                    placeholder: "******",
+                    hasError: !registerForm.isPasswordValid && registerForm.isPressedSubmit,
+                    errorMessage: "La contraseña debe tener minimo 6 caracteres",
+                    isSecure: true)
+                
+                TextFieldView(
+                    value: $registerForm.confirmPassword,
+                    label: "Confirma la contraseña",
+                    placeholder: "******",
+                    hasError: !registerForm.isConfirmPasswordValid && registerForm.isPressedSubmit,
+                    errorMessage: "Las contraseñas no coinciden",
+                    isSecure: true)
+                
+                ButtonView(
+                    label: "Registrarse",
+                    isLoading: authViewModel.isLoading,
+                    action: {
+                        registerForm.isPressedSubmit = true
+                        Task{
+                            if(registerForm.isValidForm){
+                                let isSuccess = await authViewModel.register(data: RegisterBodyRequest(
+                                    email: registerForm.email,
+                                    password: registerForm.password)
+                                )
+                                
+                                if(isSuccess){
+                                    showSuccessAlert = true
+                                }
+                            }
+                        }
+                    })
+                
+                VStack{}
+                    .frame(maxWidth: .infinity)
+                    .frame(height: 1)
+                    .background(Color(.systemGray3))
+                
+                
+                ButtonView(
+                    label: "Registrarse con Google",
+                    action: {
+                        Task {
+                            await authViewModel.singInWithGoogle()
+                        }
+                    })
+                
+                
             }
             .padding(.top, 30)
         }.alert(isPresented: $authViewModel.showAlert){
@@ -58,6 +89,8 @@ struct RegisterScreen: View {
                     authViewModel.errorMessage = nil
                     authViewModel.showAlert = false
                 })
+        }.alert("Te enviamos un correo para verificar tu cuenta. Verifícalo e inicia sesión.", isPresented: $showSuccessAlert){
+            Button("OK", action: { router.navigateBack() })
         }
     }
 }

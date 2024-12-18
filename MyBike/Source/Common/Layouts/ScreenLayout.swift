@@ -12,9 +12,11 @@ struct ScreenLayout<Content:View>: View {
     let content: Content
     var spacing: CGFloat = 0
     var goBack: (() -> Void)?
+    var withScroll: Bool? = false
     
-    init(spacing: CGFloat = 0, goBack: (() -> Void)? = nil, @ViewBuilder content: () -> Content)  {
+    init(spacing: CGFloat = 0, withScroll: Bool? = false, goBack: (() -> Void)? = nil, @ViewBuilder content: () -> Content)  {
         self.spacing = spacing
+        self.withScroll = withScroll
         self.content = content()
         self.goBack = goBack
     }
@@ -37,7 +39,13 @@ struct ScreenLayout<Content:View>: View {
                 }
             }
             
-            content
+            if withScroll! {
+                ScrollView {
+                    content
+                }.scrollIndicators(.hidden)
+            } else {
+                content
+            }
             
             Spacer()
         }

@@ -9,7 +9,7 @@ import Foundation
 import Combine
 
 class LoginFormViewModel: ObservableObject {
-    @Published var email: String = "jhoan@gmail.com"
+    @Published var email: String = "sebastiannarvaez400@gmail.com"
     @Published var password: String = "tatannvrz"
     @Published var isValidEmail: Bool = false
     @Published var isValidPassword: Bool = false

@@ -1,6 +1,6 @@
 //
 //  ButtonView.swift
-//  WordyCards
+//  MyBike
 //
 //  Created by Sebastian on 25/08/24.
 //
@@ -19,28 +19,37 @@ struct ButtonView: View {
                 if(isLoading){
                     HStack{
                         SpinnerView()
-                    }.frame(maxWidth: .infinity, maxHeight:50)
-                        .background(.accent)
-                        .clipShape(RoundedRectangle(cornerRadius: 10))
+                    }
+                    .frame(maxWidth: .infinity)
+                    .frame(height: 50)
+                    .background(.accent)
+                    .clipShape(RoundedRectangle(cornerRadius: 10))
                 }else{
                     Text(label)
                         .typography(.bold, 15, .accent)
-                        .frame(maxWidth: .infinity, maxHeight:48)
+                        .frame(maxWidth: .infinity)
+                        .frame(height: 48)
                         .background(RoundedRectangle(cornerRadius: 10).stroke(lineWidth: 2))
                 }
             }
         }else{
-            Button(action: action){
+            Button(action: {
+                guard !isLoading else { return }
+                action()
+            }){
                 if(isLoading){
                     HStack{
                         SpinnerView(color:.white)
-                    }.frame(maxWidth: .infinity, maxHeight:50)
-                        .background(.accent)
-                        .clipShape(RoundedRectangle(cornerRadius: 10))
+                    }
+                    .frame(maxWidth: .infinity)
+                    .frame(height: 50)
+                    .background(.accent)
+                    .clipShape(RoundedRectangle(cornerRadius: 10))
                 }else{
                     Text(label)
                         .typography(.bold, 15, .white)
-                        .frame(maxWidth: .infinity, maxHeight:50)
+                        .frame(maxWidth: .infinity)
+                        .frame(height: 50)
                         .background(.accent)
                         .clipShape(RoundedRectangle(cornerRadius: 10))
                 }

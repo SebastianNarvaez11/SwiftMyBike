@@ -9,24 +9,32 @@ import SwiftUI
 
 struct HomeScreen: View {
     
-    @EnvironmentObject var authViewModel : AuthViewModel
+    @EnvironmentObject var authVM : AuthViewModel
+    @EnvironmentObject var profileVM: ProfileViewModel
+    
+    @State var image: String?
     
     var body: some View {
         ScreenLayout(spacing:10){
+            
+            AsyncImageView(imageKey: profileVM.profile?.imageKey)
+                .clipShape(Circle())
+            
             ButtonView(label: "check status", action: {
-                //                Task{
-                //                    await authViewModel.checkStatus()
-                //                }
+                Task{
+                    await authVM.checkAuthStatus()
+                }
             })
             
             ButtonView(label: "salir", action: {
-                
-                //                authViewModel.logout()
+                authVM.logout()
             })
         }
     }
 }
 
 #Preview {
-    HomeScreen().environmentObject(AuthViewModel())
+    HomeScreen()
+        .environmentObject(AuthViewModel())
+        .environmentObject(ProfileViewModel())
 }

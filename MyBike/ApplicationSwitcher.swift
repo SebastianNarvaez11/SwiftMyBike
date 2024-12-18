@@ -11,16 +11,24 @@ struct ApplicationSwitcher: View {
     
     @EnvironmentObject var authViewModel: AuthViewModel
     
+    @StateObject var profileViewModel = ProfileViewModel()
+    
     var body: some View {
         switch authViewModel.status {
-        case .authenticated:
+        case .authenticated, .checkingProfile:
             MainRouterView{
-                HomeScreen()
-            }
+                if(authViewModel.status == .checkingProfile){
+                    CheckingProfileScreen()
+                }else{
+                    HomeScreen()
+                }
+            }.environmentObject(profileViewModel)
+            
         case .unauthenticated:
             AuthRouterView{
                 LoginScreen()
             }
+            
         case .checking:
             SplashScreen()
         }
@@ -30,3 +38,5 @@ struct ApplicationSwitcher: View {
 #Preview {
     ApplicationSwitcher().environmentObject(AuthViewModel())
 }
+
+

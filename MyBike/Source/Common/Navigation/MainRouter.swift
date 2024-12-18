@@ -10,6 +10,11 @@ import SwiftUI
 
 enum MainPath: Hashable {
     case home
+    
+    // PROFILE
+    case profileChecking
+    case profile
+    case profileOnboarding
 }
 
 class MainRouter: BaseRouter<MainPath> {
@@ -17,6 +22,14 @@ class MainRouter: BaseRouter<MainPath> {
         switch route {
         case .home:
             HomeScreen()
+            
+            // PROFILE
+        case .profileChecking:
+            CheckingProfileScreen()
+        case .profile:
+            ProfileScreen()
+        case .profileOnboarding:
+            OnboardingProfileScreen()
         }
     }
 }
