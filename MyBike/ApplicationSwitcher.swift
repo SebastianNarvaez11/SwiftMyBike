@@ -11,18 +11,17 @@ struct ApplicationSwitcher: View {
     
     @EnvironmentObject var authViewModel: AuthViewModel
     
-    @StateObject var profileViewModel = ProfileViewModel()
+    @StateObject var profileVM = ProfileViewModel()
+    @StateObject var userBikeVM = UserBikesViewModel()
     
     var body: some View {
         switch authViewModel.status {
-        case .authenticated, .checkingProfile:
+        case .authenticated:
             MainRouterView{
-                if(authViewModel.status == .checkingProfile){
-                    CheckingProfileScreen()
-                }else{
-                    HomeScreen()
-                }
-            }.environmentObject(profileViewModel)
+                TabBarView()
+            }
+            .environmentObject(profileVM)
+            .environmentObject(userBikeVM)
             
         case .unauthenticated:
             AuthRouterView{
@@ -30,7 +29,19 @@ struct ApplicationSwitcher: View {
             }
             
         case .checking:
-            SplashScreen()
+            SplashScreen() //con face id esto no es necesario porque siempre mostramos la pantalla del login
+            
+        case .checkingProfile:
+            CheckingProfileScreen()
+                .environmentObject(profileVM)
+                .environmentObject(userBikeVM)
+            
+            
+        case .profileOnboarding:
+            OnboardingProfileScreen()
+                .environmentObject(authViewModel)
+                .environmentObject(profileVM)
+                .environmentObject(userBikeVM)
         }
     }
 }

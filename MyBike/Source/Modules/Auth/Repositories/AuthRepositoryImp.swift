@@ -29,4 +29,11 @@ struct AuthRepositoryImp: AuthRepository {
         let response = try await request.execute(method: "GET", hasToken: true, hasApiKey: true)
         return response
     }
+    
+    func loginPlaspy(data: LoginPlaspyBodyRequest) async throws -> LoginPlaspyResponse {
+        let resource = LoginPlaspyResource()
+        let request = ApiRequest(resource: resource)
+        let response = try await request.execute(method: "POST", body: data)
+        return response
+    }
 }

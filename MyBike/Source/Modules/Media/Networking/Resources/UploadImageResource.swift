@@ -9,6 +9,7 @@ import Foundation
 
 struct UploadImageResource: ApiResourceProtocol {
     typealias ResponseType = UploadImageResponse
+    let baseURL: String = ApiConfig.baseURL
     
     let fileName: String
     let folderName: String

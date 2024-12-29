@@ -23,7 +23,13 @@ extension ApiRequest: NetworkRequestProtocol {
         return try JSONDecoder().decode(ResponseType.self, from: data)
     }
     
-    func execute(method: String, body: Encodable? = nil, hasToken: Bool = false, hasApiKey: Bool = false, imageData: UploadImageRequest? = nil) async throws -> ResponseType {
-        return try await self.sendRequest(url: self.resource.url, method: method, body: body, hasToken: hasToken, hasApiKey: hasApiKey, imageData: imageData)
-    }
+    func execute(
+        method: String,
+        body: Encodable? = nil,
+        hasToken: Bool = false,
+        token: String? = nil,
+        hasApiKey: Bool = false,
+        imageData: UploadImageRequest? = nil) async throws -> ResponseType {
+            return try await self.sendRequest(url: self.resource.url, method: method, body: body, hasToken: hasToken, token: token, hasApiKey: hasApiKey, imageData: imageData)
+        }
 }

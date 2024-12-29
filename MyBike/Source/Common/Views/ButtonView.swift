@@ -11,18 +11,22 @@ struct ButtonView: View {
     var label:String
     var isOutline:Bool = false
     var isLoading: Bool = false
+    var disabled: Bool = false
     var action: () -> Void
     
     var body: some View {
         if(isOutline){
-            Button(action: action){
+            Button(action: {
+                guard !isLoading && !disabled else { return }
+                action()
+            }){
                 if(isLoading){
                     HStack{
                         SpinnerView()
                     }
                     .frame(maxWidth: .infinity)
                     .frame(height: 50)
-                    .background(.accent)
+                    .background(disabled ? Color(.systemGray4) : .accent)
                     .clipShape(RoundedRectangle(cornerRadius: 10))
                 }else{
                     Text(label)
@@ -34,7 +38,7 @@ struct ButtonView: View {
             }
         }else{
             Button(action: {
-                guard !isLoading else { return }
+                guard !isLoading && !disabled else { return }
                 action()
             }){
                 if(isLoading){
@@ -43,14 +47,14 @@ struct ButtonView: View {
                     }
                     .frame(maxWidth: .infinity)
                     .frame(height: 50)
-                    .background(.accent)
+                    .background(disabled ? Color(.systemGray4) : .accent)
                     .clipShape(RoundedRectangle(cornerRadius: 10))
                 }else{
                     Text(label)
                         .typography(.bold, 15, .white)
                         .frame(maxWidth: .infinity)
                         .frame(height: 50)
-                        .background(.accent)
+                        .background(disabled ? Color(.systemGray4) : .accent)
                         .clipShape(RoundedRectangle(cornerRadius: 10))
                 }
             }

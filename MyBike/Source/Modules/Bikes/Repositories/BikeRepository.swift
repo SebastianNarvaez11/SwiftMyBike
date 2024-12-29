@@ -7,6 +7,6 @@
 
 import Foundation
 
-protocol BikeRepository {
-    func getAllBikes() async throws -> GetAllBikesResponse
+protocol BikeRepository: MediaRepository {
+    func getAllBikes(take: Int?, offset: Int?) async throws -> GetAllBikesResponse
 }

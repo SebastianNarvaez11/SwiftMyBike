@@ -6,48 +6,29 @@
 //
 
 import SwiftUI
+import SDWebImageSwiftUI
 
 struct AsyncImageView: View {
     
-    @StateObject var mediaVM = MediaViewModel()
-    
-    let imageKey: String?
-    @State var signedUrl: String?
+    let signedUrl: String?
+    var width: CGFloat
+    var height: CGFloat
     
     var body: some View {
         VStack{
             if let url = signedUrl {
-                AsyncImage(url: URL(string: url)){ phase in
-                    switch phase {
-                    case .empty:
-                        ProgressView() // Muestra un cargador mientras la imagen se carga
-                    case .success(let image):
-                        image.resizable() // Imagen cargada exitosamente
-                            .scaledToFill()
-                    case .failure:
-                        Text("Error loading image") // Error si no se puede cargar la imagen
-                    @unknown default:
-                        EmptyView()
-                    }
-                }
+                WebImage(url: URL(string: url))
+                    .resizable()
+                    .indicator(.activity)
+                    .scaledToFill()
             }
             
         }
-        .frame(width: 100, height: 100)
-        .background(Color(.systemGray4))
-         .onAppear(){
-            Task{
-                guard let imageKey = imageKey else { return }
-                
-                if let url = await mediaVM.getSignedUrl(imageKey: imageKey) {
-                    signedUrl = url
-                }
-            }
-        }
+        .frame(width: width, height: height)
         
     }
 }
 
 #Preview {
-    AsyncImageView(imageKey: "")
+    AsyncImageView(signedUrl: "", width: 100, height: 100)
 }

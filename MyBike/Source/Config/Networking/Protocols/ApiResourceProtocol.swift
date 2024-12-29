@@ -9,23 +9,14 @@ import Foundation
 
 protocol ApiResourceProtocol {
     associatedtype ResponseType: Decodable
-    var baseURL: String? { get }
+    var baseURL: String { get }
     var path: String { get }
     var queryItems: [URLQueryItem]? { get }
 }
 
 extension ApiResourceProtocol {
-    
-    var baseURL: String? {
-        return nil
-    }
-    
-    var resolvedBaseURL: String {
-        return baseURL ?? ApiConfig.baseURL
-    }
-    
     var url: URL {
-        var components = URLComponents(string: self.resolvedBaseURL)!
+        var components = URLComponents(string: self.baseURL)!
         components.path = self.path
         
         // Si hay queryItems, los añadimos

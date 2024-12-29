@@ -11,18 +11,18 @@ struct OnboardingProfileScreen: View {
     
     @EnvironmentObject var authVM: AuthViewModel
     @EnvironmentObject var profileVM: ProfileViewModel
-    @EnvironmentObject var router: MainRouter
+    @EnvironmentObject var userBikesVM: UserBikesViewModel
     
     @StateObject var profileForm =  CreateProfileFormViewModel()
     @StateObject var imageSelectorVM = ImageSelectorViewModel()
-    @StateObject var bikeVM = BikeViewModel()
     
-    @State var originalBikes: [BikeModel] = []
+    @State var selectedBike: BikeModel?
+    
     @State var showSuccessAlert: Bool = false
     
     var body: some View {
-        ScreenLayout(){
-            VStack(alignment: .center, spacing: 20){
+        ScreenLayout(withScroll:true){
+            VStack(alignment: .center, spacing: 10){
                 
                 AuthHeaderView(title: "Completa tu perfil")
                 
@@ -55,11 +55,15 @@ struct OnboardingProfileScreen: View {
                     hasError: !profileForm.isNameValid && profileForm.isPressedSubmit,
                     errorMessage: "El nombre debe tener minimo 3 caracteres")
                 
+                Text("Selecciona tu moto").typography(.bold, 15)
+                
+                BikesCarrouselView(selectedBike: $selectedBike)
                 
                 ButtonView(
                     label: "Continuar",
                     isLoading: profileVM.isLoading || profileVM.isUploading,
-                    action: {handleCreateProfile()}
+                    disabled: selectedBike == nil,
+                    action: { handleCreateProfile() }
                 )
                 
             }
@@ -72,12 +76,6 @@ struct OnboardingProfileScreen: View {
                     profileVM.errorMessage = nil
                     profileVM.showAlert = false
                 })
-        }.onAppear(){
-            Task{
-                originalBikes = await bikeVM.getAllBikes()
-//                TODO: ESTAMOS PINTANDO LAS MOTOS ORIGINALES PARA QUE EL USUARIO ESCOJA
-//                HAY QUE REVISAR COMO SE HACE LA PAGINACION EN SUPABASE
-            }
         }
     }
     
@@ -86,23 +84,29 @@ struct OnboardingProfileScreen: View {
         
         Task {
             guard let user = authVM.user else { return }
-            
             guard profileForm.isNameValid else { return }
+            guard let bike = selectedBike else { return }
             
             let imageKey: String? = imageSelectorVM.images.first != nil
-                ? await profileVM.uploadProfileImage(image: imageSelectorVM.images.first!, userId: user.id)
-                : nil
+            ? await profileVM.uploadProfileImage(image: imageSelectorVM.images.first!, userId: user.id)
+            : nil
             
-            let profileRequest = CreateProfileBodyRequest(name: profileForm.name, userId: user.id, image: imageKey)
+            let profileBody = CreateProfileBodyRequest(name: profileForm.name, userId: user.id, image: imageKey)
+            let userBikeBody = CreateUserBikeBodyRequest(userId: user.id, bikeId: bike.id)
             
-            let isSuccess = await profileVM.createProfile(profile: profileRequest)
+            let isSuccessProfile = await profileVM.createProfile(profile: profileBody)
             
-            if isSuccess {
-                router.navigateTo(route: .home)
+            if(isSuccessProfile){
+                let isSuccessBike = await userBikesVM.createUserBike(data: userBikeBody)
+                
+                if isSuccessBike {
+                    authVM.status = .checkingProfile
+                }
             }
+            
         }
     }
-
+    
     
 }
 
@@ -110,4 +114,5 @@ struct OnboardingProfileScreen: View {
     OnboardingProfileScreen()
         .environmentObject(AuthViewModel())
         .environmentObject(ProfileViewModel())
+        .environmentObject(UserBikesViewModel())
 }

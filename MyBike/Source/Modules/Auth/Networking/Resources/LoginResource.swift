@@ -9,9 +9,9 @@ import Foundation
 
 struct LoginResource: ApiResourceProtocol {
     typealias ResponseType = LoginResponse
+    let baseURL: String = ApiConfig.baseURL
     
     // La url es: "/auth/v1/token?grant_type=password"
-    
     var path: String = "/auth/v1/token"
     
     var grantType: String = "password"

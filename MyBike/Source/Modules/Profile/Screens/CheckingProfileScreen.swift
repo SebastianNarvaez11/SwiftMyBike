@@ -11,7 +11,7 @@ struct CheckingProfileScreen: View {
     
     @EnvironmentObject var authViewModel: AuthViewModel
     @EnvironmentObject var profileViewModel: ProfileViewModel
-    @EnvironmentObject var router: MainRouter
+    @EnvironmentObject var userBikeVM: UserBikesViewModel
     
     var body: some View {
         ScreenLayout{
@@ -29,16 +29,27 @@ struct CheckingProfileScreen: View {
         }
         .onAppear(){
             Task{
-                guard let user = authViewModel.user else {
-                    return 
-                }
+                guard let user = authViewModel.user else { return }
                 
-                let hasProfile = await profileViewModel.hasProfile(userId: user.id)
+                async let hasProfile = profileViewModel.hasProfile(userId: user.id)
+                async let hasBike = userBikeVM.getUserBikesByUserId(userId: user.id)
                 
-                if (hasProfile){
+                let (profileResult, bikeResult) = await (hasProfile, hasBike)
+                
+                if profileResult && bikeResult {
+                    print("si hay moto y perfil")
+                    
+                    if userBikeVM.userBike?.gpsId != nil {
+                        let isSuccessLogin = await authViewModel.loginPlaspy()
+                        if isSuccessLogin {
+                           _ = await userBikeVM.getLastLocation()
+                        }
+                    }
+                    
                     authViewModel.status = .authenticated
                 } else {
-                    router.navigateTo(route: .profileOnboarding)
+                    print("no hay moto o perfil", profileResult, bikeResult)
+                    authViewModel.status = .profileOnboarding
                 }
             }
         }
@@ -49,6 +60,6 @@ struct CheckingProfileScreen: View {
     CheckingProfileScreen()
         .environmentObject(AuthViewModel())
         .environmentObject(ProfileViewModel())
+        .environmentObject(UserBikesViewModel())
         .environmentObject(MainRouter())
-    
 }

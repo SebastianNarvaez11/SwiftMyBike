@@ -7,7 +7,7 @@
 
 import Foundation
 
-protocol ProfileRepository {
+protocol ProfileRepository: MediaRepository {
     func getProfileById(userId: String) async throws -> ProfileResponse
     func createProfile(profile: CreateProfileBodyRequest) async throws -> CreateProfileResponse
     func uploadProfileImage(imageData: UploadImageRequest) async throws -> UploadImageResponse

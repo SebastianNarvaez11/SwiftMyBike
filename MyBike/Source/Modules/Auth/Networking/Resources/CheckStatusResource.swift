@@ -9,6 +9,7 @@ import Foundation
 
 struct CheckStatusResource: ApiResourceProtocol {
     typealias ResponseType = CheckStatusResponse
+    let baseURL: String = ApiConfig.baseURL
     var path: String = "/auth/v1/user"
     var queryItems: [URLQueryItem]? = nil
 }

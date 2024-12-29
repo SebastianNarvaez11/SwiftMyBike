@@ -84,9 +84,9 @@ struct RegisterScreen: View {
         }.alert(isPresented: $authViewModel.showAlert){
             Alert(
                 title: Text("Algo salio mal"),
-                message: Text(authViewModel.errorMessage ?? "Error desconocido"),
+                message: Text(authViewModel.alertMessage ?? "Error desconocido"),
                 dismissButton: .default(Text("Cerrar")) {
-                    authViewModel.errorMessage = nil
+                    authViewModel.alertMessage = nil
                     authViewModel.showAlert = false
                 })
         }.alert("Te enviamos un correo para verificar tu cuenta. Verifícalo e inicia sesión.", isPresented: $showSuccessAlert){

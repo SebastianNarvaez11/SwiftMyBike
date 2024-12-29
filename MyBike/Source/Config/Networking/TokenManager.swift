@@ -19,14 +19,23 @@ class TokenManager: TokenManagerProtocol {
         return keychain.get("REFRESH-TOKEN-MB")
     }
     
+    var accessTokenPlaspy: String? {
+        return keychain.get("ACCESS-TOKEN-PLASPY")
+    }
+    
     func saveTokens(accessToken: String, refreshToken: String) {
         keychain.set(accessToken, forKey: "ACCESS-TOKEN-MB")
         keychain.set(refreshToken, forKey: "REFRESH-TOKEN-MB")
     }
     
+    func savePlaspyToken(token: String) {
+        keychain.set(token, forKey:"ACCESS-TOKEN-PLASPY")
+    }
+    
     func removeTokens() {
         keychain.delete("ACCESS-TOKEN-MB")
         keychain.delete("REFRESH-TOKEN-MB")
+        keychain.delete("ACCESS-TOKEN-PLASPY")
     }
     
     func refreshAccessToken() async throws -> Void {

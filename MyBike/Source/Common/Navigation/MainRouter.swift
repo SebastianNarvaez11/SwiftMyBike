@@ -9,27 +9,21 @@ import Foundation
 import SwiftUI
 
 enum MainPath: Hashable {
-    case home
+    case main
     
-    // PROFILE
-    case profileChecking
-    case profile
-    case profileOnboarding
+    // Pantallas que no llevan el tabbar
+    case settings
+    
 }
 
 class MainRouter: BaseRouter<MainPath> {
     @ViewBuilder func view(route: MainPath) -> some View {
         switch route {
-        case .home:
-            HomeScreen()
+        case .main:
+            TabBarView()
             
-            // PROFILE
-        case .profileChecking:
-            CheckingProfileScreen()
-        case .profile:
-            ProfileScreen()
-        case .profileOnboarding:
-            OnboardingProfileScreen()
+        case .settings:
+            SettingsScreen()
         }
     }
 }

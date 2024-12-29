@@ -9,6 +9,7 @@ import Foundation
 
 struct GetProfileByIdResource : ApiResourceProtocol {
     typealias ResponseType = ProfileResponse
+    let baseURL: String = ApiConfig.baseURL
     
     //"/rest/v1/profile?user_id=eq.6222e379-9804-4b59-9f51-0da86a6e8da8&select=*"
     

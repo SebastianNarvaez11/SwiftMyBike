@@ -13,10 +13,12 @@ struct ScreenLayout<Content:View>: View {
     var spacing: CGFloat = 0
     var goBack: (() -> Void)?
     var withScroll: Bool? = false
+    var paddingHorizontal: Bool = true
     
-    init(spacing: CGFloat = 0, withScroll: Bool? = false, goBack: (() -> Void)? = nil, @ViewBuilder content: () -> Content)  {
+    init(spacing: CGFloat = 0, withScroll: Bool? = false, paddingHorizontal: Bool = true,  goBack: (() -> Void)? = nil, @ViewBuilder content: () -> Content)  {
         self.spacing = spacing
         self.withScroll = withScroll
+        self.paddingHorizontal = paddingHorizontal
         self.content = content()
         self.goBack = goBack
     }
@@ -49,7 +51,7 @@ struct ScreenLayout<Content:View>: View {
             
             Spacer()
         }
-        .padding(.horizontal, 20)
+        .padding(.horizontal, paddingHorizontal ? 20 : 0)
         .frame(maxWidth: .infinity, maxHeight: .infinity)
         .background(.backgroundSecondary)
         .navigationBarBackButtonHidden(true)    }

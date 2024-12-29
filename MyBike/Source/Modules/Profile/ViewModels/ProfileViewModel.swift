@@ -86,4 +86,27 @@ class ProfileViewModel: ObservableObject {
             return nil
         }
     }
+    
+    @MainActor func getSignedProfileUrl() async -> String? {
+        do{
+            guard !isSigning else { return nil}
+            defer { isSigning = false }
+            isSigning = true
+            
+            guard profile != nil else { return nil }
+            
+            if let imageKey = profile?.imageKey {
+                let res = try await self.repository.getSignedUrl(data: GetSignedUrlBodyRequest(expiresIn: 3600), imageKey: imageKey)
+                return "\(ApiConfig.baseURL)/storage/v1/\(res.signedURL)"
+            }else {
+                return nil
+            }
+            
+        } catch {
+            print("Ocurrio un error: \(error)")
+            self.errorMessage = error.localizedDescription
+            self.showAlert = true
+            return nil
+        }
+    }
 }

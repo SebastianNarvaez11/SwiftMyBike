@@ -9,6 +9,7 @@ import Foundation
 
 struct GetSignedUrlResource: ApiResourceProtocol {
     typealias ResponseType = GetSignedUrlResponse
+    let baseURL: String = ApiConfig.baseURL
     let imageKey: String
     var path: String {
         return  "/storage/v1/object/sign/\(imageKey)"

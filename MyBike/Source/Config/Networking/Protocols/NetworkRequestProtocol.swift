@@ -10,11 +10,11 @@ import Foundation
 protocol NetworkRequestProtocol: AnyObject {
     associatedtype ResponseType
     func decode(data: Data) throws -> ResponseType
-    func execute(method: String, body: Encodable?, hasToken: Bool, hasApiKey: Bool, imageData: UploadImageRequest?) async throws -> ResponseType
+    func execute(method: String, body: Encodable?, hasToken: Bool, token: String?, hasApiKey: Bool, imageData: UploadImageRequest?) async throws -> ResponseType
 }
 
 extension NetworkRequestProtocol {
-    func sendRequest(url: URL, method: String, body: Encodable?, hasToken: Bool, hasApiKey: Bool, imageData: UploadImageRequest?) async throws -> ResponseType {
+    func sendRequest(url: URL, method: String, body: Encodable?, hasToken: Bool, token: String?, hasApiKey: Bool, imageData: UploadImageRequest?) async throws -> ResponseType {
         let tokenManager = TokenManager()
         
         var request = URLRequest(url:url)
@@ -30,8 +30,14 @@ extension NetworkRequestProtocol {
             }
         }
         
-        if hasToken, let token = tokenManager.accessToken {
-            request.setValue("Bearer \(token)", forHTTPHeaderField: "Authorization")
+        if hasToken {
+            if let token = token {
+                request.setValue("Bearer \(token)", forHTTPHeaderField: "Authorization")
+            } else {
+                if let accessToken = tokenManager.accessToken {
+                    request.setValue("Bearer \(accessToken)", forHTTPHeaderField: "Authorization")
+                }
+            }
         }
         
         if hasApiKey {
@@ -67,7 +73,7 @@ extension NetworkRequestProtocol {
             do{
                 try await tokenManager.refreshAccessToken()
                 print("reintentando la peticion...")
-                return try await self.sendRequest(url: url, method: method, body: body, hasToken: hasToken, hasApiKey: hasApiKey, imageData: imageData)
+                return try await self.sendRequest(url: url, method: method, body: body, hasToken: hasToken, token: token, hasApiKey: hasApiKey, imageData: imageData)
             } catch {
                 throw APIError.unauthorized
             }
